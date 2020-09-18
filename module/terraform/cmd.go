@@ -18,22 +18,24 @@ func NewExecutor() (Executor, error) {
 }
 
 func (Executor) Init() error {
-	return nil
+	out := bytes.NewBuffer()
+	return cmd(out, "init")
 }
 
-func (Executor) Apply() (io.Writer, error) {
-	return nil, nil
+func (Executor) Apply(out io.Writer) error {
+	return cmd(out, "apply", "--auto-approve") //No input
 }
 
 func (Executor) Destroy() error {
-	return nil
+	out := bytes.NewBuffer()
+	return cmd(out, "destroy", "--auto-approve")
 }
 
-func cmd(action string) (io.ReadCloser, error) {
-	run := exec.Command("terraform", action)
-	run.Env = append(os.Environ(),
+func cmd(out io.Writer, action string...) error {
+	cmd := exec.Command("terraform", action)
+	cmd.Env = append(os.Environ(),
 		"TF_LOG=DEBUG",
 	)
-	return nil, nil
+	cmd.Stderr = out
+	return cmd.Run()
 }
-
