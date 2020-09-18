@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/hoeg/terraperm/module/terraform"
 )
 
 func main() {
@@ -16,9 +17,10 @@ func main() {
 		fmt.Printf("Failed to create executor: %v\n", err)
 		return
 	}
-	err := exe.Init()
+	t := terraform.Tracer{exe}
+	trace, err := t.makeTrace()
 	if err != nil {
-
+		fmt.Printf("Failed to create trace: %v\n", err)
 	}
 	/*
 		- output filename as argument

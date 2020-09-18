@@ -4,7 +4,7 @@ type Tracer struct {
 	exe Executor
 }
 
-func (t Tracer) makeTraceTo() (io.ReadCloser, error) {
+func (t Tracer) makeTrace() (io.ReadCloser, error) {
 	err := exe.Init()
 	if err != nil {
 		return nil, err
