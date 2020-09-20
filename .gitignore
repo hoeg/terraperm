@@ -16,3 +16,4 @@
 
 *.tfstate
 .terraform
+*.tfstate.backup
