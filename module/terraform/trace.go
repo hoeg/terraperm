@@ -1,20 +1,28 @@
 package terraform
 
+import "io"
+
 type Tracer struct {
 	exe Executor
 }
 
-func (t Tracer) makeTrace() (io.ReadCloser, error) {
-	err := exe.Init()
+func NewTracer(exe Executor) Tracer {
+	return Tracer{
+		exe: exe,
+	}
+}
+
+func (t Tracer) MakeTrace(w io.Writer) error {
+	err := t.exe.Init()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	defer exe.Destroy()
-	err = exe.Apply(trace)
+	defer t.exe.Destroy()
+	err = t.exe.Apply(w)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return nil, nil
-} 
+	return nil
+}

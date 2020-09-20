@@ -1,13 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
+	"io/ioutil"
+
 	"github.com/hoeg/terraperm/module/terraform"
 )
 
 func main() {
-
 	var out string
 	flag.StringVar(&out, "out", "-", "Location to output the policy, defaults to stdout.")
 	flag.Parse()
@@ -17,18 +19,19 @@ func main() {
 		fmt.Printf("Failed to create executor: %v\n", err)
 		return
 	}
-	t := terraform.Tracer{exe}
-	trace, err := t.makeTrace()
+	b := bytes.NewBuffer(nil)
+	t := terraform.NewTracer(exe)
+
+	err = t.MakeTrace(b)
 	if err != nil {
 		fmt.Printf("Failed to create trace: %v\n", err)
 	}
-	/*
-		- output filename as argument
-		- wrap terraform binary
-		- set TF_LOG=DEBUG
-		- run terraform apply -auto-approve and record stderr
-		- run terraform destroy -auto-approve
-	 	- parse output to create policy
-	*/
+
+	data, err := ioutil.ReadAll(b)
+	if err != nil {
+		fmt.Printf("Falied to consume trace: %v\n", err)
+	}
+
+	fmt.Printf("Trace: %s\n\n", string(data))
 	fmt.Printf("Done\n")
 }
