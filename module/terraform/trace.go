@@ -23,6 +23,5 @@ func (t Tracer) MakeTrace(w io.Writer) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
