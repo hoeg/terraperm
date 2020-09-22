@@ -2,17 +2,21 @@ package terraform
 
 import (
 	"bytes"
+	"fmt"
+	"io"
 	"os"
 	"os/exec"
-	"io"
 )
 
-type Executor struct {}
+type Executor struct{}
 
 func NewExecutor() (Executor, error) {
 	cmd := exec.Command("which", "terraform")
 	err := cmd.Run()
 	if err != nil {
+		if _, ok := err.(*exec.ExitError); ok {
+			fmt.Printf("terraform was not found on the path\n")
+		}
 		return Executor{}, err
 	}
 	return Executor{}, nil
