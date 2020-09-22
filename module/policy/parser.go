@@ -46,6 +46,5 @@ func (p *Parser) Requests() ([]Request, error) {
 			requests = append(requests, req)
 		}
 	}
-
 	return requests, nil
 }
