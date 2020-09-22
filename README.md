@@ -1,6 +1,6 @@
 # terraperm
 
-It is a best practice to use least priviledge policies when working with AWS (source[https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#grant-least-privilege]). However it can sometimes be hard to figure out which privileged that must be granted in order for terraform to be able to apply the infrastructure you have just created.
+It is a best practice to use least priviledge policies when working with [AWS](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#grant-least-privilege). However it can sometimes be hard to figure out which privileged that must be granted in order for terraform to be able to apply the infrastructure you have just created.
 
 Often the workflow will be start with an empty policy:
 
