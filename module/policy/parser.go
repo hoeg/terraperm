@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-const apiTokenStart = "[aws-sdk-go] DEBUG: Request"
+const apiTokenStart = "[aws-sdk-go] DEBUG: Request "
 const apiTokenEnd = " Details:"
 const bodyEnd = "-----------------------------------------------------"
 
@@ -24,25 +24,16 @@ func NewParser(trace io.Reader) Parser {
 }
 
 func (p *Parser) Requests() ([]Request, error) {
-	r := bufio.NewReader(p.trace)
-	requests := make([]Request, 1)
-	for {
-		if r.Buffered() == 0 {
-			break
-		}
-		l, err := r.ReadString('\n')
-		if err != nil {
-			return nil, err
-		}
+	s := bufio.NewScanner(p.trace)
+	requests := make([]Request, 0)
+	for s.Scan() {
+		l := s.Text()
 		if start := strings.Index(l, apiTokenStart); start != -1 {
 			end := strings.Index(l, apiTokenEnd)
-			key := l[start:end] //is start before the token?
+			key := l[start+len(apiTokenStart) : end]
 			body := ""
-			for {
-				bl, err := r.ReadString('\n')
-				if err != nil {
-					return nil, err
-				}
+			for s.Scan() {
+				bl := s.Text()
 				if strings.Contains(bl, bodyEnd) {
 					break
 				}
