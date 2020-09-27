@@ -35,5 +35,4 @@ func TestParserOneItem(t *testing.T) {
 	if reqs[0].apiKey != "s3/CreateBucket" {
 		t.Fatalf("expected s3/CreateBucket request, got %q", reqs[0].apiKey)
 	}
-
 }
