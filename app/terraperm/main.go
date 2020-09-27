@@ -50,6 +50,11 @@ func main() {
 		fmt.Printf("Failed to prune: %v\n", err)
 		return
 	}
-	fmt.Printf("%v\n", pruned)
+	iamPolicy, err := policy.Print(pruned)
+	if err != nil {
+		fmt.Printf("Failed to print policy %v\n", err)
+		return
+	}
+	fmt.Printf("%v\n", iamPolicy)
 	fmt.Printf("Done\n")
 }
