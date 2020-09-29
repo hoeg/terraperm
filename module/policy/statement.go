@@ -63,27 +63,3 @@ func requestToStatement(req Request) Statement {
 		Arn:     "",
 	}
 }
-
-// PruneStatements groups actions together where multiple statements have the same effect and resource
-func PruneStatements(stmts []Statement) ([]Statement, error) {
-	p := make(map[string]Statement)
-	for _, s := range stmts {
-		if upd, ok := p[s.Service]; ok {
-			for a := range s.Actions {
-				upd.Actions[a] = true
-				p[s.Service] = upd
-			}
-		} else {
-			p[s.Service] = s
-		}
-	}
-	return mapToSlice(p), nil
-}
-
-func mapToSlice(in map[string]Statement) []Statement {
-	var out []Statement
-	for _, v := range in {
-		out = append(out, v)
-	}
-	return out
-}
