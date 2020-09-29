@@ -40,17 +40,10 @@ func main() {
 		return
 	}
 
-	stmts := make([]policy.Statement, 0)
-	for _, r := range reqs {
-		stmts = append(stmts, policy.RequestToStatement(r))
-	}
+	stmts := policy.NewStatements()
+	stmts.AddRequests(reqs)
 
-	pruned, err := policy.PruneStatements(stmts)
-	if err != nil {
-		fmt.Printf("Failed to prune: %v\n", err)
-		return
-	}
-	iamPolicy, err := policy.Print(pruned)
+	iamPolicy, err := policy.Print(stmts.List())
 	if err != nil {
 		fmt.Printf("Failed to print policy %v\n", err)
 		return

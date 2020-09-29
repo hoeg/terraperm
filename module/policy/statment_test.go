@@ -3,52 +3,75 @@ package policy
 import "testing"
 
 func TestNothingToMerge(t *testing.T) {
-	stmts := []Statement{
-		Statement{
-			Effect:  allow,
-			Service: "EC2",
-			Actions: []string{"StartInstance"},
+	reqs := []Request{
+		Request{
+			apiKey: "EC2/StartInstance",
+			body:   "",
 		},
-		Statement{
-			Effect:  allow,
-			Service: "S3",
-			Actions: []string{"CreateBucket"},
+		Request{
+			apiKey: "s3/CreateBucket",
+			body:   "",
 		},
 	}
 
-	pruned, err := PruneStatements(stmts)
+	stmts := NewStatements()
+	err := stmts.AddRequests(reqs)
 	if err != nil {
-		t.Fatalf("Pruning failed: %v", err)
+		t.Fatalf("adding failed: %v", err)
 	}
+	s := stmts.List()
 
-	if len(pruned) != 2 {
-		t.Fatalf("Expected 2 statements, got %d", len(pruned))
+	if len(s) != 2 {
+		t.Fatalf("Expected 2 statements, got %d", len(s))
 	}
 }
 
 func TestMergeTwoStatements(t *testing.T) {
-	stmts := []Statement{
-		Statement{
-			Effect:  allow,
-			Service: "EC2",
-			Actions: []string{"StartInstance"},
+	reqs := []Request{
+		Request{
+			apiKey: "EC2/StartInstance",
+			body:   "",
 		},
-		Statement{
-			Effect:  allow,
-			Service: "EC2",
-			Actions: []string{"CreateInstance"},
+		Request{
+			apiKey: "EC2/CreateInstance",
+			body:   "",
 		},
 	}
 
-	pruned, err := PruneStatements(stmts)
+	stmts := NewStatements()
+	err := stmts.AddRequests(reqs)
 	if err != nil {
-		t.Fatalf("Pruning failed: %v", err)
+		t.Fatalf("adding failed: %v", err)
 	}
 
-	if len(pruned) != 1 {
-		t.Fatalf("Expected 1 statements, got %d", len(pruned))
+	s := stmts.List()
+	if len(s) != 1 {
+		t.Fatalf("Expected 1 statements, got %d", len(s))
 	}
-	if len(pruned[0].Actions) != 2 {
-		t.Fatalf("Expected to have two actions, got %d", len(pruned[0].Actions))
+	if len(s[0].Actions) != 2 {
+		t.Fatalf("Expected to have two actions, got %d", len(s[0].Actions))
+	}
+}
+
+func TestTwoOfTheSameActions(t *testing.T) {
+	reqs := []Request{
+		Request{
+			apiKey: "EC2/StartInstance",
+			body:   "",
+		},
+		Request{
+			apiKey: "EC2/StartInstance",
+			body:   "",
+		},
+	}
+
+	stmts := NewStatements()
+	err := stmts.AddRequests(reqs)
+	if err != nil {
+		t.Fatalf("adding failed: %v", err)
+	}
+	s := stmts.List()
+	if len(s[0].Actions) != 1 {
+		t.Fatalf("Expected 1 action, got %d", len(s[0].Actions))
 	}
 }
